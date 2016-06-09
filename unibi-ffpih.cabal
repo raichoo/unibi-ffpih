@@ -1,0 +1,32 @@
+name:                unibi-ffpih
+version:             0.1.0.0
+synopsis:            Initial project template from stack
+description:         Please see README.md
+homepage:            https://github.com/githubuser/unibi-ffpih#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Author name here
+maintainer:          example@example.com
+copyright:           2016 Author name here
+category:            Web
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  ghc-options:         -Wall -Werror
+  hs-source-dirs:      src
+  exposed-modules:     AST
+                     , GADT
+                     , Vect
+                     , KindVect
+                     , Rocket
+                     , TypedChans
+                     , Chans
+                     , IMonad
+                     , HList
+  other-modules:       Logger
+  build-depends:       base >= 4.7 && < 5
+                     , mtl
+                     , stm
+  default-language:    Haskell2010
