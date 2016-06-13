@@ -8,7 +8,12 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
 module HList where
+
+import Language.Haskell.TH
+import Language.Haskell.TH.Quote
 
 data HList (as :: [*]) where
   HNil  :: HList '[]
@@ -48,3 +53,22 @@ data Elem (ts :: [*]) (t :: *) where
 hlookup :: Elem ts x -> HList ts -> x
 hlookup Stop    (x ::: _)  = x
 hlookup (Pop i) (_ ::: xs) = hlookup i xs
+
+-- This is a little extra I put in here because of a very justified audience
+-- question. "But what if the index gets very large? I don't want to write `Pop`
+-- over and over again."
+-- I didn't have an answer right at that moment, but this is what I came up with
+-- after the lecture. `TemplateHaskell` should be used with great care, but this
+-- is probably the quickest way to produce a value of `Elem` given an arbitrary
+-- number. It's admittedly a quick'n'dirty solution.
+hindex :: QuasiQuoter
+hindex = QuasiQuoter
+  { quotePat  = undefined
+  , quoteExp  = mkElem . read
+  , quoteType = undefined
+  , quoteDec  = undefined
+  }
+  where
+    mkElem :: Int -> ExpQ
+    mkElem 0 = [|Stop|]
+    mkElem n = [|Pop $(mkElem (n - 1))|]
